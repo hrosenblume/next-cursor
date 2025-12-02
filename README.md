@@ -90,17 +90,76 @@ The app runs out of the box using defaults from `.env`. Copy `.env.example` to `
 
 ## Google OAuth Setup
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
-2. Create a new project or select existing
-3. Go to **APIs & Services → Credentials**
-4. Click **Create Credentials → OAuth client ID**
-5. Select **Web application**
-6. Add these **Authorized redirect URIs**:
-   - `http://localhost:3000/api/auth/callback/google`
-   - `https://your-ngrok-domain.ngrok.dev/api/auth/callback/google` (for mobile testing)
-   - `https://yourdomain.com/api/auth/callback/google` (production)
-   - `https://staging.yourdomain.com/api/auth/callback/google` (staging)
-7. Copy the **Client ID** and **Client Secret** to `.env.local`
+To enable authentication, you'll need Google OAuth credentials. This takes about 5 minutes.
+
+### 1. Create a Google Cloud Project
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Click the project dropdown (top left) → **New Project**
+3. Name it (e.g., "My App") → **Create**
+4. Select your new project from the dropdown
+
+### 2. Configure OAuth Consent Screen
+
+1. Go to **APIs & Services → OAuth consent screen**
+2. Select **External** → **Create**
+3. Fill in required fields:
+   - **App name**: Your app name
+   - **User support email**: Your email
+   - **Developer contact email**: Your email
+4. Click **Save and Continue** through the remaining steps (Scopes, Test Users)
+5. Click **Publish App** to move from Testing to Production (optional for development)
+
+### 3. Create OAuth Credentials
+
+1. Go to **APIs & Services → Credentials**
+2. Click **Create Credentials → OAuth client ID**
+3. Select **Web application**
+4. Add **Authorized redirect URIs**:
+   ```
+   http://localhost:3000/api/auth/callback/google
+   http://localhost:3001/api/auth/callback/google
+   ```
+5. Click **Create**
+6. Copy the **Client ID** and **Client Secret**
+
+### 4. Configure Environment
+
+1. Copy `.env.example` to `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. Add your credentials to `.env.local`:
+   ```
+   GOOGLE_CLIENT_ID=your-client-id-here.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=your-client-secret-here
+   ADMIN_EMAIL=you@example.com
+   ADMIN_NAME=Your Name
+   ```
+
+3. Set up the database and create your admin user:
+   ```bash
+   npm run db:setup
+   ```
+
+### 5. Run the App
+
+```bash
+npm run dev
+```
+
+Visit http://localhost:3000 and click **Sign in with Google**. The first user matching `ADMIN_EMAIL` will be created as an admin.
+
+### Adding More Redirect URIs Later
+
+When deploying, add these redirect URIs to your Google Cloud credentials:
+
+| Environment | Redirect URI |
+|-------------|--------------|
+| Production | `https://yourdomain.com/api/auth/callback/google` |
+| Staging | `https://staging.yourdomain.com/api/auth/callback/google` |
+| ngrok | `https://your-domain.ngrok.dev/api/auth/callback/google` |
 
 ---
 
