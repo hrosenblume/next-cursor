@@ -8,6 +8,12 @@ We've done the heavy lifting. You bring the ideas.
 
 ---
 
+**Built by [Hunter Rosenblume](https://hunterrosenblume.com)** · [GitHub](https://github.com/hrosenblume)
+
+This template was born out of the engineering team at [Ordo](https://ordo.com), a school lunch company with a modern engineering team. If you're interested in working with us, reach out at [careers@ordo.com](mailto:careers@ordo.com).
+
+---
+
 ## Why This Template?
 
 Building a production Next.js app means solving the same problems every time: auth flows, user management, deployment scripts, environment handling, CI/CD pipelines. This template solves all of that out of the box.
