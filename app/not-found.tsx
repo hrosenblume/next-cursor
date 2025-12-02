@@ -1,0 +1,27 @@
+/**
+ * 404 Not Found Page
+ * ==================
+ * 
+ * Shown when a page doesn't exist.
+ */
+
+import Link from 'next/link'
+import { CenteredPage } from '@/components/CenteredPage'
+
+export default function NotFound() {
+  return (
+    <CenteredPage>
+      <div className="text-center">
+        <h1 className="text-title font-bold mb-4">404</h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-8">Page not found</p>
+        <Link
+          href="/"
+          className="px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg hover:opacity-90"
+        >
+          Go Home
+        </Link>
+      </div>
+    </CenteredPage>
+  )
+}
+

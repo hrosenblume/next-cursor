@@ -1,0 +1,48 @@
+// =============================================================================
+// Prisma Schema - PostgreSQL (Production)
+// =============================================================================
+//
+// This schema is used for PRODUCTION with PostgreSQL.
+// For local development, use schema.prisma (SQLite) instead.
+//
+// Use DigitalOcean Managed PostgreSQL or similar for production.
+// Connection string goes in DATABASE_URL_PROD environment variable.
+//
+// Commands:
+//   npm run db:push:prod    - Push schema changes to PostgreSQL
+//   npm run db:studio:prod  - Open Prisma Studio for production DB
+//   npm run db:seed:prod    - Create the initial admin user in production
+//
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_PROD")
+}
+
+// -----------------------------------------------------------------------------
+// User Model
+// -----------------------------------------------------------------------------
+// Stores authorized users who can access the app.
+// Only users in this table can sign in (allowlist model).
+//
+// Roles:
+//   - "admin" - Full access to admin panel and all features
+//   - "user"  - Standard user access
+//
+// To add a user: Insert into this table or use the admin panel
+// To make someone admin: Set role = "admin"
+// -----------------------------------------------------------------------------
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+}
+

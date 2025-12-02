@@ -1,0 +1,102 @@
+---
+description: Coding conventions and rules
+globs: ["**/*"]
+---
+
+# Coding Rules
+
+> **What is this file?**
+> This file tells Cursor AI how to write code in your project.
+> It enforces consistent patterns and catches common mistakes.
+> Update this file when you establish new conventions.
+
+## Code Style
+
+### TypeScript
+- Use strict mode
+- Prefer explicit types over `any`
+- Use path aliases: `@/lib/*`, `@/components/*`, `@/app/*`
+
+### React/Next.js
+- Use Server Components by default
+- Add `'use client'` only when hooks/interactivity are needed
+- Use `useCallback` and `useMemo` for performance in client components
+- Prefer async Server Components for data fetching
+
+### Components
+- Functional components only
+- Props interfaces defined inline or in same file
+- Use `cn()` utility from `@/lib/utils/cn` for conditional classes
+- Check `components/ui/` (shadcn) before creating new UI components
+
+### Styling
+- Use Tailwind CSS exclusively
+- Dark mode: Use `dark:` prefix
+- Use custom typography scale: `text-title`, `text-body`, `text-section`
+- Use `can-hover:` variant for navigation links (prevents iOS sticky hover)
+
+## Centralized Configs
+
+| Need | Location |
+|------|----------|
+| Site content | `lib/site-config.ts` |
+| Shared styles | `lib/styles.ts` |
+| Keyboard shortcuts | `lib/keyboard/shortcuts.ts` |
+| SVG icons | `components/Icons.tsx` |
+
+## API Routes
+- Return JSON responses
+- Use `withSession()` or `withAdmin()` HOC from `@/lib/auth`
+- Use proper HTTP status codes (401, 403, 404, 400)
+
+## Database
+- Use singleton Prisma client from `@/lib/db`
+- Keep queries in Server Components or API routes
+- Handle edge cases (not found, already exists)
+
+## Touch/Mobile
+- Use `TapLink` for nav links (iOS scroll detection)
+- Add `overscroll-contain` to scrollable containers
+- Support `prefers-reduced-motion`
+
+## Don't
+- Don't use inline styles
+- Don't put business logic in components (use lib/)
+- Don't commit `.env.local` files
+- Don't use raw Tailwind font sizes (`text-sm`, `text-lg`)
+- Don't duplicate values — abstract them
+- Don't create UI components when shadcn has one
+
+## Do
+- Keep components small and focused
+- Use semantic HTML
+- Handle loading and error states
+- Check existing abstractions before creating new ones
+- Add explainer comments to new files
+
+## Git Workflow
+
+### When user types "d" (dev commit)
+1. `git add -A && git status -sb && git diff --staged --stat`
+2. Review changes
+3. Commit with descriptive message
+4. Push to `dev` branch
+
+### When user types "g" (production commit)
+**Only run when explicitly requested.**
+1. If on dev: merge to main first
+2. `git add -A`, commit, push to main
+3. Return to dev branch
+
+### When user types "p" (pull)
+`git stash && git pull && git stash pop`
+
+## Planning Files
+
+| File | Purpose |
+|------|---------|
+| `plans/Tomorrow.md` | Immediate tasks |
+| `plans/Future.md` | Long-term ideas |
+| `plans/tmp/` | Working drafts (gitignored) |
+
+Use checkboxes in Tomorrow.md. Move completed items to Future.md or delete.

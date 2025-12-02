@@ -1,0 +1,40 @@
+/**
+ * Sign In Page
+ * ============
+ * 
+ * Custom sign-in page with Google OAuth button.
+ * Replace the default NextAuth sign-in page.
+ */
+
+'use client'
+
+import { signIn } from 'next-auth/react'
+import { CenteredPage } from '@/components/CenteredPage'
+import { GoogleIcon } from '@/components/Icons'
+import { SITE } from '@/lib/site-config'
+
+export default function SignIn() {
+  return (
+    <CenteredPage className="bg-background">
+      <div className="max-w-md w-full space-y-8 p-8">
+        <div className="text-center">
+          <h1 className="text-title font-bold text-gray-900 dark:text-white">
+            {SITE.name}
+          </h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
+            Sign in to continue
+          </p>
+        </div>
+        
+        <button
+          onClick={() => signIn('google', { callbackUrl: '/' })}
+          className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          <GoogleIcon />
+          Sign in with Google
+        </button>
+      </div>
+    </CenteredPage>
+  )
+}
+

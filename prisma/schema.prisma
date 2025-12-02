@@ -1,0 +1,49 @@
+// =============================================================================
+// Prisma Schema - SQLite (Development)
+// =============================================================================
+//
+// This schema is used for LOCAL DEVELOPMENT with SQLite.
+// For production, use schema.postgresql.prisma instead.
+//
+// SQLite is simpler to set up (no external database needed) and perfect for
+// local development. The production schema is identical but uses PostgreSQL.
+//
+// Commands:
+//   npm run db:push    - Push schema changes to SQLite
+//   npm run db:studio  - Open Prisma Studio GUI
+//   npm run db:seed    - Create the initial admin user
+//   npm run db:setup   - Push schema + seed (first-time setup)
+//
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// -----------------------------------------------------------------------------
+// User Model
+// -----------------------------------------------------------------------------
+// Stores authorized users who can access the app.
+// Only users in this table can sign in (allowlist model).
+//
+// Roles:
+//   - "admin" - Full access to admin panel and all features
+//   - "user"  - Standard user access
+//
+// To add a user: Insert into this table or use the admin panel
+// To make someone admin: Set role = "admin"
+// -----------------------------------------------------------------------------
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+}
+

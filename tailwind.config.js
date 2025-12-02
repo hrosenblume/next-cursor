@@ -1,0 +1,81 @@
+/**
+ * Tailwind CSS Configuration
+ * ==========================
+ * 
+ * This configures Tailwind CSS with:
+ * - shadcn/ui color system (CSS variables)
+ * - Custom typography scale (text-title, text-body, etc.)
+ * - Dark mode via class strategy
+ * - can-hover: variant for touch device handling
+ * 
+ * To customize colors, edit the CSS variables in app/globals.css
+ * To add shadcn components: npx shadcn@latest add <component>
+ */
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+      },
+      fontSize: {
+        title: 'var(--font-title)',
+        h1: 'var(--font-h1)',
+        section: 'var(--font-section)',
+        body: 'var(--font-body)',
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+      },
+    },
+  },
+  plugins: [
+    require('tailwindcss-animate'),
+    // Only apply hover styles on devices that support hover (not touch)
+    // Usage: can-hover:hover:bg-accent instead of hover:bg-accent
+    function({ addVariant }) {
+      addVariant('can-hover', '@media (hover: hover)')
+    },
+  ],
+}
+

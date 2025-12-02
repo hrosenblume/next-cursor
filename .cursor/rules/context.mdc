@@ -1,0 +1,132 @@
+---
+description: Project architecture and systems reference
+globs: ["**/*"]
+---
+
+# Project Context
+
+> **What is this file?**
+> This file provides Cursor AI with context about your project's architecture.
+> Cursor reads this automatically when working in your codebase.
+> Update this file when you add major features or change the architecture.
+
+## Overview
+
+**Next.js 15 Starter Template** — A production-ready foundation with authentication, admin dashboard, and deployment infrastructure.
+
+**URLs:**
+- Production: `$NEXT_PUBLIC_SITE_URL`
+- Staging: `$NEXT_PUBLIC_STAGING_URL` (Cloudflare Access protected)
+- Admin panel: `/admin` (admin only)
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Runtime | Node.js 20+ |
+| Framework | Next.js 15 (App Router) |
+| UI | React 19 |
+| Database | SQLite (dev) / PostgreSQL (prod) via Prisma |
+| Auth | NextAuth.js v5 with Google OAuth |
+| Styling | Tailwind CSS |
+| Theme | next-themes (dark mode) |
+| Components | shadcn/ui |
+
+## Project Structure
+
+```
+app/
+├── api/
+│   ├── admin/users/     # User management API
+│   ├── auth/[...nextauth]/ # NextAuth handler
+│   └── health/          # Health check endpoint
+├── admin/               # Admin dashboard
+├── auth/                # Auth pages (signin, error)
+├── globals.css          # Theme + typography
+├── layout.tsx           # Root layout
+└── page.tsx             # Landing page
+
+components/
+├── admin/               # AdminTable, Pagination, UserForm
+├── ui/                  # shadcn/ui components
+└── [shared]             # ThemeToggle, Icons, etc.
+
+lib/
+├── auth.ts              # NextAuth config
+├── db.ts                # Prisma singleton
+├── site-config.ts       # Site content (name, tagline, etc.)
+├── keyboard/            # Keyboard shortcuts
+└── utils/               # cn(), format helpers
+
+prisma/
+├── schema.prisma        # SQLite (dev)
+├── schema.postgresql.prisma # PostgreSQL (prod)
+└── seed.ts              # Admin user seeding
+
+.cursor/rules/           # Cursor AI rules
+.github/workflows/       # CI/CD
+plans/                   # Project planning
+ecosystem.config.js      # PM2 configuration
+```
+
+## Database Schema
+
+```prisma
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("user")  // "admin" or "user"
+  createdAt DateTime @default(now())
+}
+```
+
+## Authentication
+
+- **Google OAuth** via NextAuth.js v5
+- **Allowlist model**: Only users in `User` table can sign in
+- **Roles**: `admin` (full access) or `user` (basic access)
+- **Setup**: Set `ADMIN_EMAIL` in `.env.local`, run `npm run db:seed`
+
+## API Routes
+
+| Endpoint | Description |
+|----------|-------------|
+| `/api/admin/users` | User management (admin) |
+| `/api/auth/*` | NextAuth endpoints |
+| `/api/health` | Health check for monitoring |
+
+## Production Deployment
+
+### Architecture
+- **Production**: `/var/www/app` — `main` branch → port 3000
+- **Staging**: `/var/www/app-staging` — `dev` branch → port 3001
+- **Database**: DigitalOcean Managed PostgreSQL
+- **Process Manager**: PM2 (`ecosystem.config.js`)
+- **Staging Protection**: Cloudflare Tunnel + Access
+
+### GitHub Actions
+- Push to `main` → deploys production
+- Push to `dev` → deploys staging
+
+### GitHub Secrets
+- `DO_HOST` — Droplet IP
+- `DO_USER` — SSH username
+- `DO_SSH_KEY` — Private key
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Development server |
+| `npm run dev:tunnel` | Dev + ngrok tunnel |
+| `npm run build:prod` | Production build |
+| `npm run db:push` | Push schema (SQLite) |
+| `npm run db:push:prod` | Push schema (PostgreSQL) |
+| `npm run db:studio` | Prisma Studio |
+| `npm run db:seed` | Seed admin user |
+| `npm run db:setup` | Push + seed |
+
+## Environment Variables
+
+See `.env.example` for complete list with descriptions.

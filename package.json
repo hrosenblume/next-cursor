@@ -1,0 +1,51 @@
+{
+  "name": "cursor-nextjs-template",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node -e \"if(!require('fs').existsSync('.env.local')){console.warn('\\n\\x1b[33m⚠ No .env.local found - auth won\\'t work until you add Google credentials\\nCopy from .env.example and fill in GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET\\x1b[0m\\n')}\" && rm -rf .next && next dev",
+    "dev:skip-check": "rm -rf .next && next dev",
+    "dev:tunnel": "bash -c 'rm -rf .next; for port in 3000 3001 3002 3003 3004; do lsof -ti:$port | xargs kill -9 2>/dev/null; done; set -a; source .env.local; set +a; AUTH_URL=https://$NGROK_DOMAIN next dev & npx ngrok http 3000 --domain=$NGROK_DOMAIN --oauth=google --oauth-allow-email=$NGROK_OAUTH_EMAIL --oauth-allow-email=$ADMIN_EMAIL'",
+    "build": "prisma generate && next build",
+    "build:prod": "prisma generate --schema=prisma/schema.postgresql.prisma && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:push": "export $(grep -v '^#' .env.local | xargs) && prisma db push",
+    "db:push:prod": "export $(grep -v '^#' .env.local | xargs) && prisma db push --schema=prisma/schema.postgresql.prisma",
+    "db:studio": "export $(grep -v '^#' .env.local | xargs) && prisma studio",
+    "db:studio:prod": "export $(grep -v '^#' .env.local | xargs) && prisma studio --schema=prisma/schema.postgresql.prisma",
+    "db:seed": "npx tsx --env-file=.env.local prisma/seed.ts",
+    "db:seed:prod": "npx tsx --env-file=.env.local prisma/seed.ts --schema=prisma/schema.postgresql.prisma",
+    "db:setup": "npm run db:push && npm run db:seed"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.16.2",
+    "@radix-ui/react-alert-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-slot": "^1.2.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.555.0",
+    "next": "^15.0.0",
+    "next-auth": "^5.0.0-beta.25",
+    "next-themes": "^0.4.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0",
+    "autoprefixer": "^10.4.0",
+    "ngrok": "^5.0.0-beta.2",
+    "postcss": "^8.4.0",
+    "prisma": "^4.16.2",
+    "tailwindcss": "^3.3.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.0.0"
+  }
+}
+
