@@ -1048,8 +1048,16 @@ NGROK_OAUTH_EMAIL=${adminEmail || 'you@example.com'}`}</Code>
               placeholder="postgresql://doadmin:password@db-xxx.ondigitalocean.com:25060/defaultdb?sslmode=require"
             />
             {dbConnectionString && dbConnectionString.startsWith('postgresql://') && (
-              <p className="text-green-500 text-sm mt-2">✓ Connection string saved!</p>
+              <p className="text-green-500 text-sm mt-2">✓ Connection string saved! It will be used in the next section to create your production environment file.</p>
             )}
+            
+            <div className="mt-4 p-3 bg-primary/10 border border-primary/20 rounded-lg">
+              <p className="text-sm"><strong>💡 What happens with this?</strong></p>
+              <p className="text-sm text-muted-foreground mt-1">
+                In the next section, we&apos;ll create a <code className="bg-muted px-1 rounded">.env.local</code> file for your server. 
+                Your database connection string will be automatically included as <code className="bg-muted px-1 rounded">DATABASE_URL_PROD</code>.
+              </p>
+            </div>
           </Step>
           
           <h3 className="font-semibold mt-6 mb-3">Checklist</h3>
