@@ -2,7 +2,7 @@
  * Deploy Banner
  * =============
  * 
- * Development-only banner that prompts users to deploy their app.
+ * Development-only floating icon that links to the deployment guide.
  * 
  * Visibility rules:
  * - Hidden in production (NODE_ENV === 'production')
@@ -18,6 +18,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import { RocketIcon } from '@/components/Icons'
 
 // -----------------------------------------------------------------------------
 // Constants
@@ -103,6 +104,7 @@ async function fetchDeploymentStatus(signal: AbortSignal): Promise<DeploymentSta
 
 export function DeployBanner() {
   const pathname = usePathname()
+  const [isHovered, setIsHovered] = useState(false)
   const [isDeployed, setIsDeployed] = useState<boolean>(() => {
     // Check cache on initial render to avoid flash
     const cached = getCachedStatus()
@@ -151,21 +153,45 @@ export function DeployBanner() {
 
   return (
     <div 
-      className="bg-gradient-to-r from-primary to-green-500 text-primary-foreground"
-      role="banner"
-      aria-label="Deployment guide available"
+      className="fixed bottom-4 right-4 z-[9999]"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
-        <span className="text-sm font-medium">
-          Built-in deployment guide included.
-        </span>
-        <Link 
-          href="/deploy" 
-          className="text-sm font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-white/50 rounded"
-        >
-          View the Deploy Guide →
-        </Link>
-      </div>
+      {/* Tooltip */}
+      <Link
+        href="/deploy"
+        className={`
+          absolute bottom-full right-0 mb-2 whitespace-nowrap
+          bg-popover text-popover-foreground
+          px-3 py-2 rounded-lg shadow-lg border
+          text-sm font-medium
+          transition-all duration-200 ease-out
+          ${isHovered 
+            ? 'opacity-100 translate-y-0' 
+            : 'opacity-0 translate-y-1 pointer-events-none'
+          }
+        `}
+      >
+        View Deploy Guide →
+      </Link>
+
+      {/* Floating Icon Button */}
+      <Link
+        href="/deploy"
+        className="
+          flex items-center justify-center
+          w-10 h-10 rounded-full
+          bg-gradient-to-br from-primary to-green-500
+          text-primary-foreground
+          shadow-lg hover:shadow-xl
+          transition-all duration-200
+          hover:scale-105 active:scale-95
+          focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2
+        "
+        aria-label="View Deploy Guide"
+      >
+        <RocketIcon className="w-5 h-5" />
+      </Link>
     </div>
   )
 }

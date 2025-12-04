@@ -34,22 +34,36 @@ print_warning() {
     echo -e "${YELLOW}⚠ $1${NC}"
 }
 
-# Step 1: Update system
+# =============================================================================
+# IMPORTANT: Make everything non-interactive so users don't get stuck on dialogs
+# =============================================================================
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=a
+
+# Fix any interrupted package manager state (common if previous run was interrupted)
+print_step "Checking package manager state..."
+if dpkg --audit 2>/dev/null | grep -q .; then
+    print_warning "Fixing interrupted package manager..."
+    dpkg --configure -a
+fi
+
+# Step 1: Update system (non-interactive, keep existing configs)
 print_step "Updating system packages..."
-apt update && apt upgrade -y
+apt-get update
+apt-get -y -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" upgrade
 
 # Step 2: Install Node.js 20
 print_step "Installing Node.js 20..."
 if ! command -v node &> /dev/null; then
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-    apt install -y nodejs
+    apt-get install -y nodejs
 else
     echo "  Node.js already installed: $(node -v)"
 fi
 
 # Step 3: Install nginx
 print_step "Installing nginx..."
-apt install -y nginx
+apt-get install -y -o Dpkg::Options::="--force-confold" nginx
 systemctl enable nginx
 systemctl start nginx
 
@@ -87,7 +101,7 @@ EOF
 
 # Step 8: Install certbot for SSL
 print_step "Installing certbot for SSL..."
-apt install -y certbot python3-certbot-nginx
+apt-get install -y certbot python3-certbot-nginx
 
 # Step 9: Configure firewall
 print_step "Configuring firewall..."

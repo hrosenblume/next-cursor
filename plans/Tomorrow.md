@@ -7,6 +7,14 @@
 > 
 > Cursor AI checks this file at the start of sessions to understand priorities.
 
+## Marching Orders
+
+- [ ] Fix one-shot for testing
+- [ ] Get UI builder up and running
+- [ ] Add ability to use custom components
+- [ ] Add ability to look at designs in Figma
+- [ ] **First build ready for Wednesday**
+
 ## Priority
 
 - [ ] Set up Google OAuth credentials

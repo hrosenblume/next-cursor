@@ -270,6 +270,7 @@ export default function DeployGuidePage() {
   const [dropletIp, setDropletIp] = useState('')
   const [dbConnectionString, setDbConnectionString] = useState('')
   const [nextAuthSecret, setNextAuthSecret] = useState('')
+  const [sshPublicKey, setSshPublicKey] = useState('')
   
   // Detect if running locally (for smart Section 1 content)
   const [isLocalhost, setIsLocalhost] = useState(true) // Default true for SSR
@@ -300,6 +301,7 @@ export default function DeployGuidePage() {
       setDropletIp(data.dropletIp || '')
       setDbConnectionString(data.dbConnectionString || '')
       setNextAuthSecret(data.nextAuthSecret || '')
+      setSshPublicKey(data.sshPublicKey || '')
     }
   }, [])
   
@@ -320,8 +322,9 @@ export default function DeployGuidePage() {
       dropletIp,
       dbConnectionString,
       nextAuthSecret,
+      sshPublicKey,
     }))
-  }, [completedSections, currentSection, checkedItems, githubUsername, repoName, googleClientId, googleClientSecret, adminEmail, adminName, ngrokDomain, prodDomain, dropletIp, dbConnectionString, nextAuthSecret])
+  }, [completedSections, currentSection, checkedItems, githubUsername, repoName, googleClientId, googleClientSecret, adminEmail, adminName, ngrokDomain, prodDomain, dropletIp, dbConnectionString, nextAuthSecret, sshPublicKey])
   
   const completeSection = (num: number) => {
     if (!completedSections.includes(num)) {
@@ -356,6 +359,7 @@ export default function DeployGuidePage() {
     setDropletIp('')
     setDbConnectionString('')
     setNextAuthSecret('')
+    setSshPublicKey('')
   }
   
   // Generate NEXTAUTH_SECRET
@@ -641,11 +645,22 @@ ADMIN_NAME=${adminName || 'Your Name'}`}</Code>
               label="Your ngrok domain"
               value={ngrokDomain}
               onChange={setNgrokDomain}
-              placeholder="your-app.ngrok.dev"
+              placeholder="hunter2.ngrok.dev"
             />
             {ngrokDomain && (
-              <div className="mt-2">
-                <p className="text-sm mb-2">Add these lines to your <code className="bg-muted px-1 rounded">.env.local</code> file in Cursor:</p>
+              <div className="mt-4">
+                <p className="text-sm font-medium mb-2">Add these lines to your <code className="bg-muted px-1 rounded">.env.local</code> file in Cursor:</p>
+                
+                <div className="bg-muted/50 rounded-lg p-4 mb-3">
+                  <p className="font-medium text-sm mb-2">📂 How to open .env.local:</p>
+                  <ol className="list-decimal ml-4 space-y-1 text-sm text-muted-foreground">
+                    <li>Press <code className="bg-background px-1.5 py-0.5 rounded">Cmd+P</code> (Mac) or <code className="bg-background px-1.5 py-0.5 rounded">Ctrl+P</code> (Windows)</li>
+                    <li>Type <strong>.env.local</strong> and hit Enter</li>
+                    <li>Scroll to the bottom of the file</li>
+                    <li>Paste the lines below, then save (<code className="bg-background px-1.5 py-0.5 rounded">Cmd+S</code> / <code className="bg-background px-1.5 py-0.5 rounded">Ctrl+S</code>)</li>
+                  </ol>
+                </div>
+                
                 <Code>{`NGROK_DOMAIN=${ngrokDomain}
 NGROK_OAUTH_EMAIL=${adminEmail || 'you@example.com'}`}</Code>
               </div>
@@ -653,12 +668,24 @@ NGROK_OAUTH_EMAIL=${adminEmail || 'you@example.com'}`}</Code>
           </Step>
           
           <Step title="3. Add ngrok redirect URI to Google">
-            <p>In Google Cloud Console → Credentials → Your OAuth client, add:</p>
+            <a 
+              href="https://console.cloud.google.com/apis/credentials" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 mt-2 mb-3 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Open Google Cloud Console →
+            </a>
+            <p className="mt-2">Go to Credentials → Your OAuth client → Add this redirect URI:</p>
             <Code>{`https://${ngrokDomain || 'your-domain.ngrok.dev'}/api/auth/callback/google`}</Code>
           </Step>
           
           <Step title="4. Run with tunnel">
-            <p className="mb-2">In Cursor&apos;s terminal, run:</p>
+            <p className="mb-2">In Cursor&apos;s terminal (<code className="bg-muted px-1.5 py-0.5 rounded">Ctrl+`</code>):</p>
+            <ol className="list-decimal ml-4 space-y-2 text-sm mb-3">
+              <li>Stop the current dev server by pressing <code className="bg-muted px-1.5 py-0.5 rounded">Ctrl+C</code></li>
+              <li>Run this command:</li>
+            </ol>
             <Code>npm run dev:tunnel</Code>
             <p className="mt-3 mb-2">Then on your phone:</p>
             <ol className="list-decimal ml-4 space-y-2 text-sm">
@@ -685,14 +712,39 @@ NGROK_OAUTH_EMAIL=${adminEmail || 'you@example.com'}`}</Code>
           </Explainer>
           
           <Step title="1. Generate an SSH key (if you don&apos;t have one)">
-            <p className="mb-2">In Cursor&apos;s terminal (<code className="bg-muted px-1 rounded">Ctrl+`</code>), check if you have an SSH key:</p>
+            <Explainer title="What is SSH?">
+              SSH is like a secure password that lets your computer talk to servers. Instead of typing a password each time, you use a special &quot;key&quot; file. You&apos;ll create one now and use it to connect to DigitalOcean.
+            </Explainer>
+            
+            <p className="mb-2">In Cursor&apos;s terminal (<code className="bg-muted px-1 rounded">Ctrl+`</code>), check if you already have a key:</p>
             <Code>cat ~/.ssh/id_ed25519.pub</Code>
-            <p className="mt-2 text-sm">If you see a key starting with <code className="bg-muted px-1 rounded">ssh-ed25519</code>, skip to step 2.</p>
-            <p className="mt-3 mb-2">If you get &quot;No such file&quot;, create a new key in Cursor&apos;s terminal:</p>
-            <Code>ssh-keygen -t ed25519 -C &quot;your-email@example.com&quot;</Code>
+            <p className="mt-2 text-sm">If you see a key starting with <code className="bg-muted px-1 rounded">ssh-ed25519</code>, skip to &quot;Copy your key&quot; below.</p>
+            
+            <p className="mt-4 mb-2"><strong>If you get &quot;No such file&quot;</strong>, create a new key:</p>
+            <Code>{`ssh-keygen -t ed25519 -C "${adminEmail || 'your-email@example.com'}"`}</Code>
             <p className="mt-2 text-sm text-muted-foreground">Press Enter 3 times to accept defaults (no passphrase is fine for now).</p>
-            <p className="mt-2 mb-2">Then copy your public key (still in Cursor&apos;s terminal):</p>
-            <Code>cat ~/.ssh/id_ed25519.pub</Code>
+            
+            <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+              <p className="font-medium mb-2">📋 Copy your key</p>
+              <p className="text-sm text-muted-foreground mb-3">Run this command to <strong>display</strong> your key (it doesn&apos;t automatically copy it):</p>
+              <Code>cat ~/.ssh/id_ed25519.pub</Code>
+              
+              <p className="text-sm mt-4 mb-2">You&apos;ll see something like this:</p>
+              <pre className="bg-background p-3 rounded text-xs overflow-x-auto">
+{`ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... ${adminEmail || 'your-email@example.com'}`}
+              </pre>
+              
+              <p className="text-sm mt-3 mb-2"><strong>Select and copy the entire line</strong> (starting with <code className="bg-background px-1 rounded">ssh-ed25519</code>), then paste it here:</p>
+              <textarea
+                value={sshPublicKey}
+                onChange={(e) => setSshPublicKey(e.target.value)}
+                placeholder="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI..."
+                className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm font-mono h-20 resize-none"
+              />
+              {sshPublicKey && (
+                <p className="text-green-500 text-sm mt-2">✓ Key saved! You&apos;ll use this in step 2.</p>
+              )}
+            </div>
           </Step>
           
           <Step title="2. Create a DigitalOcean droplet">
@@ -704,12 +756,16 @@ NGROK_OAUTH_EMAIL=${adminEmail || 'you@example.com'}`}</Code>
             >
               Create Droplet →
             </a>
-            <ul className="list-disc ml-4 mt-3 space-y-1 text-sm">
+            <ol className="list-decimal ml-4 mt-3 space-y-2 text-sm">
               <li>Choose <strong>Ubuntu 22.04</strong></li>
               <li>Basic plan: <strong>$6/mo</strong> (1GB) or <strong>$12/mo</strong> (2GB)</li>
-              <li>Under <strong>Authentication</strong> → select <strong>SSH keys</strong></li>
-              <li>Click <strong>New SSH Key</strong> → paste the key you copied above</li>
-            </ul>
+              <li>Under <strong>Authentication</strong> → select <strong>Password</strong> (we&apos;ll add SSH in step 4)</li>
+              <li>Create a root password (you won&apos;t need it after step 4)</li>
+              <li>Click <strong>Create Droplet</strong></li>
+            </ol>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Wait ~1 minute for the droplet to be created. You&apos;ll see an IP address when it&apos;s ready.
+            </p>
           </Step>
           
           <Step title="3. Save your droplet IP">
@@ -721,17 +777,98 @@ NGROK_OAUTH_EMAIL=${adminEmail || 'you@example.com'}`}</Code>
             />
           </Step>
           
-          <Step title="4. Connect to your server">
-            <p className="mb-2">In Cursor&apos;s terminal (<code className="bg-muted px-1 rounded">Ctrl+`</code>), SSH into your server:</p>
+          <Step title="4. Add your SSH key via DigitalOcean Console">
+            <p className="mb-3">Now we&apos;ll add your SSH key so you can connect securely from Cursor:</p>
+            
+            <a 
+              href="https://cloud.digitalocean.com/droplets" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Open DigitalOcean Droplets →
+            </a>
+            
+            <ol className="list-decimal ml-4 mt-4 space-y-2 text-sm">
+              <li>Click on your droplet (<strong>{ip || 'your IP address'}</strong>)</li>
+              <li>Click <strong>Access</strong> tab → <strong>Launch Droplet Console</strong></li>
+              <li>A web terminal will open. Paste this command:</li>
+            </ol>
+            
+            {sshPublicKey ? (
+              <div className="mt-3">
+                <Code copyable={true}>{`mkdir -p ~/.ssh && echo "${sshPublicKey}" >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys`}</Code>
+              </div>
+            ) : (
+              <p className="mt-3 text-sm text-yellow-600 dark:text-yellow-400">
+                ⚠️ Go back to step 1 and save your SSH key first, then come back here
+              </p>
+            )}
+            
+            <ol className="list-decimal ml-4 mt-4 space-y-2 text-sm" start={4}>
+              <li>Close the Droplet Console</li>
+              <li>Now connect from Cursor&apos;s terminal (<code className="bg-muted px-1.5 py-0.5 rounded">Ctrl+`</code>):</li>
+            </ol>
+            
             <OneLiner label="Copy SSH command">{`ssh root@${ip}`}</OneLiner>
             
-            <Warning>
-              <p className="text-sm"><strong>First time?</strong> Type <code className="bg-muted px-1 rounded">yes</code> when asked about fingerprint.</p>
-            </Warning>
+            <div className="bg-muted/50 rounded-lg p-4 mt-4">
+              <p className="font-medium mb-2">💡 What to expect:</p>
+              <ul className="text-sm space-y-1 text-muted-foreground">
+                <li>• Type <code className="bg-background px-1 rounded">yes</code> when asked about fingerprint</li>
+                <li>• <strong>Success!</strong> You&apos;ll see <code className="bg-background px-1 rounded">root@your-droplet:~#</code></li>
+              </ul>
+            </div>
           </Step>
           
-          <Step title="5. Run the setup script">
-            <p className="mb-2"><strong>On the server</strong> (you should see <code className="bg-muted px-1 rounded">root@your-droplet:~#</code>), paste this command:</p>
+          <Step title="5. Get your code on GitHub">
+            <Explainer title="Why GitHub?">
+              The setup script downloads your code from GitHub. You need to &quot;fork&quot; (copy) this template to your own GitHub account first.
+            </Explainer>
+            
+            <ol className="list-decimal ml-4 space-y-3 text-sm">
+              <li>
+                <strong>Fork the template</strong> (creates a copy under your GitHub account):
+                <div className="mt-2">
+                  <a 
+                    href="https://github.com/hrosenblume/next-cursor/fork" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                  >
+                    Fork on GitHub →
+                  </a>
+                </div>
+              </li>
+              <li>
+                <strong>Enter your GitHub details</strong> (after forking):
+                <div className="mt-2 p-4 bg-card border border-border rounded-lg">
+                  <div className="grid grid-cols-2 gap-3">
+                    <InputField
+                      label="Your GitHub Username"
+                      value={githubUsername}
+                      onChange={setGithubUsername}
+                      placeholder="yourusername"
+                    />
+                    <InputField
+                      label="Repo Name"
+                      value={repoName}
+                      onChange={setRepoName}
+                      placeholder="next-cursor"
+                    />
+                  </div>
+                  {githubUsername && repoName && (
+                    <p className="text-xs text-green-500 mt-2">
+                      ✓ Will use: github.com/{githubUsername}/{repoName}
+                    </p>
+                  )}
+                </div>
+              </li>
+            </ol>
+          </Step>
+          
+          <Step title="6. Run the setup script on your server">
+            <p className="mb-2">Back in your SSH session (<code className="bg-muted px-1 rounded">root@your-droplet:~#</code>), paste this command:</p>
             <OneLiner label="Copy setup command">{`curl -fsSL https://raw.githubusercontent.com/${gh}/${repo}/main/scripts/setup-server.sh | bash`}</OneLiner>
             
             <div className="bg-muted/50 rounded-lg p-4 my-4">
@@ -747,9 +884,22 @@ NGROK_OAUTH_EMAIL=${adminEmail || 'you@example.com'}`}</Code>
             <Important>
               <p>When the script finishes, it shows a key starting with <code className="bg-muted px-1 rounded">ssh-ed25519</code>. Copy this entire key — you need it for the next step.</p>
             </Important>
+            
+            <Warning>
+              <p className="text-sm mb-2"><strong>Script got stuck or SSH stopped working?</strong></p>
+              <p className="text-sm mb-3">If you see a dialog about &quot;sshd_config&quot;, just press <code className="bg-background px-1 rounded">Enter</code> to accept the default. Don&apos;t use arrow keys — they don&apos;t work in the web console.</p>
+              <p className="text-sm mb-2"><strong>If SSH breaks (&quot;Connection refused&quot;):</strong></p>
+              <ol className="list-decimal ml-4 space-y-1 text-sm">
+                <li>Go to <a href="https://cloud.digitalocean.com/droplets" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">DigitalOcean Droplets →</a></li>
+                <li>Click on your droplet</li>
+                <li>Click <strong>Power</strong> → <strong>Power Cycle</strong></li>
+                <li>Wait 1-2 minutes, then try SSH again</li>
+                <li>Re-run the setup script</li>
+              </ol>
+            </Warning>
           </Step>
           
-          <Step title="6. Add deploy key to GitHub">
+          <Step title="7. Add deploy key to GitHub">
             <p className="mb-3">Copy the key from the script and add it here:</p>
             <a 
               href={`https://github.com/${gh}/${repo}/settings/keys/new`}
@@ -766,6 +916,12 @@ NGROK_OAUTH_EMAIL=${adminEmail || 'you@example.com'}`}</Code>
           <div className="space-y-2">
             <CheckItem checked={!!checkedItems['4-droplet']} onChange={() => toggleCheck('4-droplet')}>
               Created DigitalOcean droplet
+            </CheckItem>
+            <CheckItem checked={!!checkedItems['4-ssh']} onChange={() => toggleCheck('4-ssh')}>
+              Added SSH key via Droplet Console
+            </CheckItem>
+            <CheckItem checked={!!checkedItems['4-fork']} onChange={() => toggleCheck('4-fork')}>
+              Forked repo to my GitHub account
             </CheckItem>
             <CheckItem checked={!!checkedItems['4-script']} onChange={() => toggleCheck('4-script')}>
               Ran setup script on server
