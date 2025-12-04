@@ -271,6 +271,7 @@ export default function DeployGuidePage() {
   const [dbConnectionString, setDbConnectionString] = useState('')
   const [nextAuthSecret, setNextAuthSecret] = useState('')
   const [sshPublicKey, setSshPublicKey] = useState('')
+  const [serverDeployKey, setServerDeployKey] = useState('')
   
   // Detect if running locally (for smart Section 1 content)
   const [isLocalhost, setIsLocalhost] = useState(true) // Default true for SSR
@@ -302,6 +303,7 @@ export default function DeployGuidePage() {
       setDbConnectionString(data.dbConnectionString || '')
       setNextAuthSecret(data.nextAuthSecret || '')
       setSshPublicKey(data.sshPublicKey || '')
+      setServerDeployKey(data.serverDeployKey || '')
     }
   }, [])
   
@@ -323,8 +325,9 @@ export default function DeployGuidePage() {
       dbConnectionString,
       nextAuthSecret,
       sshPublicKey,
+      serverDeployKey,
     }))
-  }, [completedSections, currentSection, checkedItems, githubUsername, repoName, googleClientId, googleClientSecret, adminEmail, adminName, ngrokDomain, prodDomain, dropletIp, dbConnectionString, nextAuthSecret, sshPublicKey])
+  }, [completedSections, currentSection, checkedItems, githubUsername, repoName, googleClientId, googleClientSecret, adminEmail, adminName, ngrokDomain, prodDomain, dropletIp, dbConnectionString, nextAuthSecret, sshPublicKey, serverDeployKey])
   
   const completeSection = (num: number) => {
     if (!completedSections.includes(num)) {
@@ -360,6 +363,7 @@ export default function DeployGuidePage() {
     setDbConnectionString('')
     setNextAuthSecret('')
     setSshPublicKey('')
+    setServerDeployKey('')
   }
   
   // Generate NEXTAUTH_SECRET
@@ -900,16 +904,79 @@ NGROK_OAUTH_EMAIL=${adminEmail || 'you@example.com'}`}</Code>
           </Step>
           
           <Step title="7. Add deploy key to GitHub">
-            <p className="mb-3">Copy the key from the script and add it here:</p>
-            <a 
-              href={`https://github.com/${gh}/${repo}/settings/keys/new`}
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              Add Deploy Key on GitHub →
-            </a>
-            <p className="mt-2 text-sm text-muted-foreground">Check &quot;Allow write access&quot; when adding.</p>
+            <Explainer title="What is this?">
+              The setup script created an SSH key on your server. You need to tell GitHub about this key so your server can pull code from your repo.
+            </Explainer>
+            
+            <p className="mb-3"><strong>Step A:</strong> Paste the deploy key from your terminal output here:</p>
+            <p className="text-sm text-muted-foreground mb-2">Look for the line starting with <code className="bg-muted px-1 rounded">ssh-ed25519</code> in your terminal</p>
+            <textarea
+              value={serverDeployKey}
+              onChange={(e) => setServerDeployKey(e.target.value)}
+              placeholder="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... deploy-key"
+              className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm font-mono h-16 resize-none"
+            />
+            {serverDeployKey && (
+              <p className="text-green-500 text-sm mt-2">✓ Key saved!</p>
+            )}
+            
+            <p className="mt-6 mb-3"><strong>Step B:</strong> Add it to GitHub:</p>
+            
+            {githubUsername && repoName ? (
+              <a 
+                href={`https://github.com/${githubUsername}/${repoName}/settings/keys/new`}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                Add Deploy Key on GitHub →
+              </a>
+            ) : (
+              <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                <p className="text-sm text-yellow-600 dark:text-yellow-400">
+                  ⚠️ Go back to Step 5 and enter your GitHub username and repo name first
+                </p>
+              </div>
+            )}
+            
+            <div className="mt-4 p-4 bg-muted/50 rounded-lg">
+              <p className="font-medium mb-3">📝 On the GitHub page, fill in:</p>
+              <div className="space-y-3 text-sm">
+                <div className="flex gap-3">
+                  <span className="font-medium w-16">Title:</span>
+                  <div className="flex-1">
+                    <code className="bg-background px-2 py-1 rounded">DigitalOcean Server</code>
+                    <p className="text-muted-foreground text-xs mt-1">This is just a label — you can name it anything</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <span className="font-medium w-16">Key:</span>
+                  <div className="flex-1">
+                    {serverDeployKey ? (
+                      <div>
+                        <div className="bg-background p-2 rounded border border-border">
+                          <code className="text-xs break-all">{serverDeployKey}</code>
+                        </div>
+                        <CopyButton text={serverDeployKey} label="Copy Key" />
+                      </div>
+                    ) : (
+                      <p className="text-muted-foreground">Paste your key in Step A above first</p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-3 items-start">
+                  <span className="font-medium w-16">Access:</span>
+                  <div className="flex-1">
+                    <p>✅ <strong>Check &quot;Allow write access&quot;</strong></p>
+                    <p className="text-muted-foreground text-xs mt-1">Required for deployments to work</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <p className="mt-4 text-sm text-muted-foreground">
+              Click <strong>Add key</strong> when done. You should see your new key listed.
+            </p>
           </Step>
           
           <h3 className="font-semibold mt-6 mb-3">Checklist</h3>
