@@ -101,7 +101,7 @@ export default function AdminLayout({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <Link href="/">Back to site</Link>
+                  <a href="/">Back to site</a>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/' })}>
@@ -129,9 +129,9 @@ export default function AdminLayout({
               </Link>
             ))}
             <div className="border-t border-border mt-2 pt-2">
-              <Link href="/" className="block py-3 text-muted-foreground hover:text-foreground">
+              <a href="/" className="block py-3 text-muted-foreground hover:text-foreground">
                 Back to site
-              </Link>
+              </a>
               <button 
                 onClick={() => signOut({ callbackUrl: '/' })}
                 className="block w-full text-left py-3 text-destructive"

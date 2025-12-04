@@ -1,23 +1,15 @@
 /**
  * Next.js Configuration
  * =====================
- *
+ * 
  * Key settings:
  * - output: 'standalone' - Creates a minimal production bundle for Docker/PM2
  * - images.unoptimized - Disable image optimization (simpler for self-hosting)
  * - allowedDevOrigins - Whitelist for ngrok and local network testing
- *
- * Bundle Analyzer:
- * - Run `npm run analyze` to analyze bundle size
- * - Opens browser with bundle visualization
- *
+ * 
  * For production deployment, the standalone output is used with PM2.
  * See ecosystem.config.js for PM2 configuration.
  */
-
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -26,8 +18,12 @@ const nextConfig = {
     unoptimized: true,
   },
   // Add your ngrok domain and local network IPs for mobile testing
-  allowedDevOrigins: ['*.ngrok.dev', '*.ngrok-free.app', '192.168.*.*'],
-};
+  allowedDevOrigins: [
+    '*.ngrok.dev',
+    '*.ngrok-free.app',
+    '192.168.*.*',
+  ],
+}
 
-module.exports = withBundleAnalyzer(nextConfig);
+module.exports = nextConfig
 

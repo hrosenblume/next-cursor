@@ -40,7 +40,9 @@ export const SITE = {
   // Shown in the homepage footer
   // type: 'email' will use the EmailLink component (obfuscated mailto)
   footerLinks: [
-    { label: 'View on GitHub', href: 'https://github.com/hrosenblume/next-cursor' },
+    { label: 'GitHub', href: 'https://github.com/hrosenblume/next-cursor' },
+    { label: 'Twitter', href: '' },
+    { label: 'Email', type: 'email' },
   ] as FooterLink[],
   
   // -----------------------------------------------------------------------------

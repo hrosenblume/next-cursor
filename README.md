@@ -8,6 +8,12 @@ We've done the heavy lifting. You bring the ideas.
 
 ---
 
+**Built by [Hunter Rosenblume](https://hunterrosenblume.com)** · [GitHub](https://github.com/hrosenblume)
+
+This template was born out of the engineering team at [Ordo](https://ordo.com), a school lunch company with a modern engineering team. If you're interested in working with us, reach out at [careers@ordo.com](mailto:careers@ordo.com).
+
+---
+
 ## Why This Template?
 
 Building a production Next.js app means solving the same problems every time: auth flows, user management, deployment scripts, environment handling, CI/CD pipelines. This template solves all of that out of the box.
@@ -385,31 +391,6 @@ This template includes pre-configured Cursor rules:
 - `.cursor/rules/rules.mdc` — Coding conventions
 
 Update these files as your project evolves to keep Cursor's suggestions relevant.
-
-### Git Shortcuts for Cursor
-
-Built-in shortcuts that Cursor understands. Just type the letter in chat:
-
-| Shortcut | Action | Description |
-|----------|--------|-------------|
-| `d` | Dev commit | Stage all, review changes, commit with conventional format, push to `dev` |
-| `g` | Production commit | Merge dev → main, commit, push to `main`, return to dev |
-| `p` | Pull | Stash changes, pull latest, restore stash |
-| `s` | Status | Show current branch, tracking info, and changed files |
-| `l` | Log | Show last 15 commits with graph visualization |
-| `b` | Branch | Create, switch, or delete branches |
-| `r` | Revert | Undo last commit or discard changes |
-| `m` | Merge | Merge a branch into current branch |
-| `c` | Conflicts | Help resolve merge conflicts |
-
-**Example usage:**
-- Type `d` → Cursor stages changes, shows diff, creates a conventional commit, pushes to dev
-- Type `g` → Cursor merges to main and deploys (only when explicitly requested)
-- Type `s` → Cursor shows git status and current branch info
-- Type `l` → Cursor shows recent commit history
-- Type `r` → Cursor helps you undo commits or discard changes safely
-
-These shortcuts use **Conventional Commits** format (`feat:`, `fix:`, `docs:`, etc.) which is enforced by commitlint + husky.
 
 ---
 

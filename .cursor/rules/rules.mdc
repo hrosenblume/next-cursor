@@ -48,8 +48,6 @@ globs: ["**/*"]
 - Return JSON responses
 - Use `withSession()` or `withAdmin()` HOC from `@/lib/auth`
 - Use proper HTTP status codes (401, 403, 404, 400)
-- Validate request bodies with Zod schemas
-- Co-locate schemas with routes or in `lib/schemas/`
 
 ## Database
 - Use singleton Prisma client from `@/lib/db`
@@ -78,96 +76,20 @@ globs: ["**/*"]
 
 ## Git Workflow
 
-This project uses **Conventional Commits** enforced by commitlint + husky.
-
-### Commit Message Format
-```
-<type>(<scope>): <subject>
-
-[optional body]
-```
-
-**Types:**
-| Type | Use for |
-|------|---------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation only |
-| `style` | Formatting, no code change |
-| `refactor` | Code restructuring |
-| `perf` | Performance improvement |
-| `test` | Adding/updating tests |
-| `build` | Build system, dependencies |
-| `ci` | CI/CD changes |
-| `chore` | Maintenance tasks |
-
-**Examples:**
-- `feat(auth): add Google OAuth login`
-- `fix(api): handle null user in session`
-- `docs: update README setup instructions`
-- `chore: update dependencies`
-
-### Git Shortcuts
-
-| Shortcut | Action |
-|----------|--------|
-| `d` | Dev commit |
-| `g` | Production commit |
-| `p` | Pull latest |
-| `s` | Status |
-| `l` | Log |
-| `b` | Branch |
-| `r` | Revert |
-| `m` | Merge |
-| `c` | Conflicts |
-
 ### When user types "d" (dev commit)
 1. `git add -A && git status -sb && git diff --staged --stat`
-2. Review changes and determine commit type
-3. Commit with conventional format: `git commit -m "<type>: <description>"`
-4. Push to `dev` branch: `git push origin dev`
+2. Review changes
+3. Commit with descriptive message
+4. Push to `dev` branch
 
 ### When user types "g" (production commit)
 **Only run when explicitly requested.**
-1. If on dev: `git checkout main && git merge dev`
-2. `git add -A`, commit with conventional format, push to main
-3. Return to dev: `git checkout dev`
+1. If on dev: merge to main first
+2. `git add -A`, commit, push to main
+3. Return to dev branch
 
 ### When user types "p" (pull)
 `git stash && git pull && git stash pop`
-
-### When user types "s" (status)
-`git status -sb && git branch -vv`
-Show current branch, tracking info, and changed files.
-
-### When user types "l" (log)
-`git log --oneline -15 --graph --decorate`
-Show last 15 commits with branch visualization.
-
-### When user types "b" (branch)
-1. Show current branches: `git branch -a`
-2. Ask user what they want: create, switch, or delete
-3. Execute requested action
-
-### When user types "r" (revert)
-1. Show last 5 commits: `git log --oneline -5`
-2. Ask user what to revert: last commit, specific commit, or unstaged changes
-3. Execute with appropriate command:
-   - Unstaged changes: `git checkout -- .`
-   - Last commit (keep changes): `git reset --soft HEAD~1`
-   - Last commit (discard): `git reset --hard HEAD~1`
-
-### When user types "m" (merge)
-1. Show available branches: `git branch -a`
-2. Ask which branch to merge into current
-3. `git merge <branch>`
-4. If conflicts, guide through resolution
-
-### When user types "c" (conflicts)
-1. `git status` to show conflicted files
-2. List each conflicted file
-3. Open each file and help resolve conflicts
-4. After resolving: `git add <file>` and continue merge/rebase
 
 ## Planning Files
 
