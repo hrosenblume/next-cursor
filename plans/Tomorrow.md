@@ -12,7 +12,7 @@
 - [ ] Set up Google OAuth credentials
 - [ ] Configure environment variables
 - [ ] Run `npm run db:setup` to initialize database
-- [ ] Test sign-in flow
+- [ ] Test sign-in at [localhost:3000/admin](http://localhost:3000/admin)
 
 ## Setup
 

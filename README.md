@@ -190,7 +190,7 @@ npm run db:setup
 npm run dev
 ```
 
-Visit `localhost:3000` and sign in!
+Visit [localhost:3000/admin](http://localhost:3000/admin) to test sign-in!
 
 ---
 

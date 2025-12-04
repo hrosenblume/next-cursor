@@ -587,7 +587,7 @@ ADMIN_NAME=${adminName || 'Your Name'}`}</Code>
             </ol>
             <Code>npm run db:seed && npm run dev</Code>
             <ol className="list-decimal ml-4 space-y-2 text-sm mt-2" start={3}>
-              <li>Open <a href="http://localhost:3000" target="_blank" className="text-primary hover:underline">localhost:3000</a> and sign in!</li>
+              <li>Open <a href="http://localhost:3000/admin" target="_blank" className="text-primary hover:underline">localhost:3000/admin</a> to test sign-in!</li>
             </ol>
           </Step>
           
@@ -607,7 +607,7 @@ ADMIN_NAME=${adminName || 'Your Name'}`}</Code>
               Added credentials to .env.local
             </CheckItem>
             <CheckItem checked={!!checkedItems['2-signin']} onChange={() => toggleCheck('2-signin')}>
-              Can sign in at localhost:3000
+              Can sign in at <a href="http://localhost:3000/admin" target="_blank" className="text-primary hover:underline">localhost:3000/admin</a>
             </CheckItem>
           </div>
         </>
