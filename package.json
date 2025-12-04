@@ -1,5 +1,5 @@
 {
-  "name": "cursor-nextjs-template",
+  "name": "next-cursor",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -7,16 +7,20 @@
     "dev:skip-check": "rm -rf .next && next dev",
     "dev:tunnel": "bash -c 'rm -rf .next; for port in 3000 3001 3002 3003 3004; do lsof -ti:$port | xargs kill -9 2>/dev/null; done; set -a; source .env.local; set +a; AUTH_URL=https://$NGROK_DOMAIN next dev & npx ngrok http 3000 --domain=$NGROK_DOMAIN --oauth=google --oauth-allow-email=$NGROK_OAUTH_EMAIL --oauth-allow-email=$ADMIN_EMAIL'",
     "build": "prisma generate && next build",
-    "build:prod": "prisma generate --schema=prisma/schema.postgresql.prisma && next build",
+    "build:prod": "prisma generate --schema=prisma/schema.postgresql.prisma && next build && cp -r .next/static .next/standalone/.next/static && cp -r public .next/standalone/public",
     "start": "next start",
     "lint": "next lint",
+    "setup": "bash scripts/setup-local.sh",
+    "setup:check": "bash scripts/check-prereqs.sh",
+    "setup:validate": "bash scripts/validate-env.sh",
     "db:push": "export $(grep -v '^#' .env.local | xargs) && prisma db push",
     "db:push:prod": "export $(grep -v '^#' .env.local | xargs) && prisma db push --schema=prisma/schema.postgresql.prisma",
     "db:studio": "export $(grep -v '^#' .env.local | xargs) && prisma studio",
     "db:studio:prod": "export $(grep -v '^#' .env.local | xargs) && prisma studio --schema=prisma/schema.postgresql.prisma",
     "db:seed": "npx tsx --env-file=.env.local prisma/seed.ts",
     "db:seed:prod": "npx tsx --env-file=.env.local prisma/seed.ts --schema=prisma/schema.postgresql.prisma",
-    "db:setup": "npm run db:push && npm run db:seed"
+    "db:setup": "npm run db:push && npm run db:seed",
+    "deploy:guide": "bash scripts/deploy-guide.sh"
   },
   "dependencies": {
     "@prisma/client": "^4.16.2",

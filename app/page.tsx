@@ -9,6 +9,10 @@
  * - Footer with links and theme toggle
  * 
  * Edit lib/site-config.ts to customize content.
+ * 
+ * DEPLOY GUIDE FEATURE: The banner at the top links to the deployment guide.
+ * To remove it: set SITE.showDeployBanner = false in lib/site-config.ts,
+ * then delete the {SITE.showDeployBanner && ...} block below (lines ~44-58).
  */
 
 import Link from 'next/link'
@@ -22,7 +26,8 @@ import {
   PaletteIcon, 
   MoonIcon, 
   RocketIcon, 
-  SmartphoneIcon 
+  SmartphoneIcon,
+  GitHubIcon
 } from '@/components/Icons'
 
 const featureIcons: Record<string, React.ReactNode> = {
@@ -40,9 +45,34 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
+      {/* Deploy guide banner - toggle with SITE.showDeployBanner in lib/site-config.ts */}
+      {SITE.showDeployBanner && (
+        <div className="bg-gradient-to-r from-primary to-green-500 text-primary-foreground">
+          <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
+            <span className="text-sm font-medium">
+              Built-in deployment guide included.
+            </span>
+            <Link 
+              href="/deploy" 
+              className="text-sm font-semibold hover:underline"
+            >
+              View the Deploy Guide →
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
-        <span className="font-bold text-lg">{SITE.name}</span>
+        <a 
+          href={SITE.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-3 py-1.5 bg-foreground text-background rounded-md text-sm font-medium hover:bg-foreground/90 transition-colors"
+        >
+          <GitHubIcon className="w-4 h-4" />
+          Fork on GitHub
+        </a>
         <div className="flex items-center gap-4">
           {isAdmin && (
             <Button variant="ghost" asChild>
@@ -129,7 +159,7 @@ export default async function Home() {
       <footer className="max-w-5xl mx-auto px-6 py-12 border-t border-border">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            Built with Next.js, Tailwind, and shadcn/ui
+            Enterprise Next.js template optimized for Cursor
           </p>
           <div className="flex items-center gap-6">
             {SITE.footerLinks.map((link) => (

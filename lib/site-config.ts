@@ -19,9 +19,19 @@ export const SITE = {
   // -----------------------------------------------------------------------------
   // Branding
   // -----------------------------------------------------------------------------
-  name: 'Your App',
-  tagline: 'A modern Next.js starter template',
+  name: 'Next.js Cursor Template',
+  tagline: 'A modern Next.js starter template built for Cursor',
   description: 'Production-ready Next.js 15 starter with auth, admin dashboard, and deployment infrastructure.',
+  
+  // -----------------------------------------------------------------------------
+  // Deploy Guide (removable feature)
+  // -----------------------------------------------------------------------------
+  // Toggle: Set to false to hide the deploy banner on the homepage.
+  // Full removal:
+  //   1. Set this to false (or delete this property)
+  //   2. Delete the app/deploy/ folder
+  //   3. Optionally remove the banner JSX block from app/page.tsx (~lines 47-61)
+  showDeployBanner: true,
   
   // -----------------------------------------------------------------------------
   // Contact
@@ -41,8 +51,8 @@ export const SITE = {
   // type: 'email' will use the EmailLink component (obfuscated mailto)
   footerLinks: [
     { label: 'GitHub', href: 'https://github.com/hrosenblume/next-cursor' },
-    { label: 'Twitter', href: '' },
-    { label: 'Email', type: 'email' },
+    // { label: 'Twitter', href: 'https://twitter.com/yourhandle' },
+    // { label: 'Email', type: 'email' },
   ] as FooterLink[],
   
   // -----------------------------------------------------------------------------

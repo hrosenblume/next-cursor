@@ -2,14 +2,12 @@
 # GitHub Actions Deploy Workflow
 # =============================================================================
 #
-# Automatically deploys to your DigitalOcean droplet when you push:
-#   - Push to `main` branch → Deploys to production (/var/www/app, port 3000)
-#   - Push to `dev` branch  → Deploys to staging (/var/www/app-staging, port 3001)
+# Automatically deploys to your DigitalOcean droplet when you push to main.
 #
 # Required GitHub Secrets (Settings → Secrets → Actions):
 #   - DO_HOST:    Your droplet IP address (e.g., 123.456.789.0)
 #   - DO_USER:    SSH username (usually 'root')
-#   - DO_SSH_KEY: Private SSH key (entire contents of ~/.ssh/id_rsa)
+#   - DO_SSH_KEY: Private SSH key (entire contents of ~/.ssh/id_ed25519)
 #
 # What this workflow does:
 #   1. SSH into your droplet
@@ -27,14 +25,13 @@ name: Deploy
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Production
-        if: github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DO_HOST }}
@@ -51,23 +48,4 @@ jobs:
             npx prisma db push --schema=prisma/schema.postgresql.prisma --skip-generate
             npm run build:prod
             pm2 restart app-prod
-
-      - name: Deploy to Staging
-        if: github.ref == 'refs/heads/dev'
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.DO_HOST }}
-          username: ${{ secrets.DO_USER }}
-          key: ${{ secrets.DO_SSH_KEY }}
-          script: |
-            cd /var/www/app-staging
-            git remote prune origin
-            git fetch origin dev
-            git reset --hard origin/dev
-            npm install --production=false
-            export $(grep -v '^#' .env.local | xargs)
-            npx prisma generate --schema=prisma/schema.postgresql.prisma
-            npx prisma db push --schema=prisma/schema.postgresql.prisma --skip-generate
-            npm run build:prod
-            pm2 restart app-staging
 
