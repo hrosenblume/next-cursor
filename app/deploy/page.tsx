@@ -1103,30 +1103,30 @@ NGROK_OAUTH_EMAIL=${adminEmail || 'you@example.com'}`}</Code>
             <p className="mb-3">Your environment file (auto-generated from your inputs):</p>
             <Code copyable={false}>{`DATABASE_URL_PROD="${dbConnectionString || 'postgresql://your-connection-string'}"
 NEXTAUTH_SECRET="${nextAuthSecret || 'click-generate-secret-above'}"
-GOOGLE_CLIENT_ID=${googleClientId || 'your-client-id'}
-GOOGLE_CLIENT_SECRET=${googleClientSecret || 'your-client-secret'}
-NEXT_PUBLIC_SITE_URL=https://${domain}
-ADMIN_EMAIL=${adminEmail || 'you@example.com'}
-ADMIN_NAME=${adminName || 'Your Name'}`}</Code>
+GOOGLE_CLIENT_ID="${googleClientId || 'your-client-id'}"
+GOOGLE_CLIENT_SECRET="${googleClientSecret || 'your-client-secret'}"
+NEXT_PUBLIC_SITE_URL="https://${domain}"
+ADMIN_EMAIL="${adminEmail || 'you@example.com'}"
+ADMIN_NAME="${adminName || 'Your Name'}"`}</Code>
             <div className="flex gap-3 mt-3">
               <DownloadEnvButton 
                 content={`DATABASE_URL_PROD="${dbConnectionString || 'postgresql://your-connection-string'}"
 NEXTAUTH_SECRET="${nextAuthSecret || 'click-generate-secret-above'}"
-GOOGLE_CLIENT_ID=${googleClientId || 'your-client-id'}
-GOOGLE_CLIENT_SECRET=${googleClientSecret || 'your-client-secret'}
-NEXT_PUBLIC_SITE_URL=https://${domain}
-ADMIN_EMAIL=${adminEmail || 'you@example.com'}
-ADMIN_NAME=${adminName || 'Your Name'}`}
+GOOGLE_CLIENT_ID="${googleClientId || 'your-client-id'}"
+GOOGLE_CLIENT_SECRET="${googleClientSecret || 'your-client-secret'}"
+NEXT_PUBLIC_SITE_URL="https://${domain}"
+ADMIN_EMAIL="${adminEmail || 'you@example.com'}"
+ADMIN_NAME="${adminName || 'Your Name'}"`}
                 filename="env.production.txt"
               />
               <CopyButton 
                 text={`DATABASE_URL_PROD="${dbConnectionString || 'postgresql://your-connection-string'}"
 NEXTAUTH_SECRET="${nextAuthSecret || 'click-generate-secret-above'}"
-GOOGLE_CLIENT_ID=${googleClientId || 'your-client-id'}
-GOOGLE_CLIENT_SECRET=${googleClientSecret || 'your-client-secret'}
-NEXT_PUBLIC_SITE_URL=https://${domain}
-ADMIN_EMAIL=${adminEmail || 'you@example.com'}
-ADMIN_NAME=${adminName || 'Your Name'}`}
+GOOGLE_CLIENT_ID="${googleClientId || 'your-client-id'}"
+GOOGLE_CLIENT_SECRET="${googleClientSecret || 'your-client-secret'}"
+NEXT_PUBLIC_SITE_URL="https://${domain}"
+ADMIN_EMAIL="${adminEmail || 'you@example.com'}"
+ADMIN_NAME="${adminName || 'Your Name'}"`}
                 label="Copy to Clipboard"
                 size="lg"
               />
@@ -1137,19 +1137,42 @@ ADMIN_NAME=${adminName || 'Your Name'}`}
             <p className="mb-2">In Cursor&apos;s terminal, SSH into your server:</p>
             <Code>{`ssh root@${ip}`}</Code>
             
-            <p className="mt-4 mb-2"><strong>On the server</strong>, clone the repo and create the env file:</p>
-            <OneLiner label="Copy clone command">{`cd /var/www && git clone git@github.com:${gh}/${repo}.git app && cd app && nano .env.local`}</OneLiner>
+            <p className="mt-4 mb-2"><strong>On the server</strong>, run these commands one at a time:</p>
+            
+            <div className="space-y-3">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">1. Clone your repo:</p>
+                <OneLiner label="Copy">{`cd /var/www && git clone git@github.com:${gh}/${repo}.git app`}</OneLiner>
+              </div>
+              
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">2. Go into the app folder:</p>
+                <OneLiner label="Copy">{`cd /var/www/app`}</OneLiner>
+              </div>
+              
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">3. Create the environment file:</p>
+                <OneLiner label="Copy">{`nano .env.local`}</OneLiner>
+              </div>
+            </div>
             
             <div className="bg-muted/50 rounded-lg p-3 my-3 text-sm">
-              <p className="font-medium mb-1">📝 In nano (on the server):</p>
+              <p className="font-medium mb-1">📝 In nano:</p>
               <ol className="list-decimal ml-4 space-y-1">
-                <li>Paste the .env.local content from Step 2</li>
-                <li>Press <code className="bg-background px-1 rounded">Ctrl+X</code> → <code className="bg-background px-1 rounded">Y</code> → <code className="bg-background px-1 rounded">Enter</code></li>
+                <li>Paste the .env.local content from Step 2 above (use <code className="bg-background px-1 rounded">Ctrl+Shift+V</code> or right-click → Paste)</li>
+                <li>Save and exit: <code className="bg-background px-1 rounded">Ctrl+X</code> → <code className="bg-background px-1 rounded">Y</code> → <code className="bg-background px-1 rounded">Enter</code></li>
               </ol>
             </div>
             
-            <p className="mb-2"><strong>Still on the server</strong>, build and start the app:</p>
-            <OneLiner label="Copy build commands">{`npm install && npm run db:push:prod && npm run db:seed:prod && npm run build:prod && pm2 start ecosystem.config.js && pm2 save && pm2 startup`}</OneLiner>
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">4. Install, build, and start the app:</p>
+              <OneLiner label="Copy build commands">{`npm install && npm run db:push:prod && npm run db:seed:prod && npm run build:prod && pm2 start ecosystem.config.js && pm2 save && pm2 startup`}</OneLiner>
+            </div>
+            
+            <Warning>
+              <p className="text-sm"><strong>Make sure you&apos;re in /var/www/app before running npm commands!</strong></p>
+              <p className="text-sm mt-1">If you get &quot;package.json not found&quot;, run: <code className="bg-background px-1 rounded">cd /var/www/app</code></p>
+            </Warning>
           </Step>
           
           <h3 className="font-semibold mt-6 mb-3">Checklist</h3>
