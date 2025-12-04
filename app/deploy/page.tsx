@@ -1028,13 +1028,28 @@ NGROK_OAUTH_EMAIL=${adminEmail || 'you@example.com'}`}</Code>
           </Step>
           
           <Step title="2. Get connection string">
-            <p>Once created, go to Connection Details and copy the connection string.</p>
+            <p className="mb-3">Once your database is created, find the connection string:</p>
+            
+            <ol className="list-decimal ml-4 space-y-2 text-sm mb-4">
+              <li>Click on your database in the DigitalOcean dashboard</li>
+              <li>Scroll to <strong>CONNECTION DETAILS</strong> section</li>
+              <li>Make sure <strong>Public network</strong> tab is selected</li>
+              <li>Click the <strong>Connection string</strong> dropdown</li>
+              <li>Select <strong>&quot;Connection string&quot;</strong> from the dropdown (not &quot;Connection parameters&quot;)</li>
+              <li>Leave User as <strong>doadmin</strong> (default)</li>
+              <li>Click <strong>Copy</strong></li>
+            </ol>
+            
+            <p className="text-sm text-muted-foreground mb-2">Paste your connection string here:</p>
             <InputField
               label="Database Connection String"
               value={dbConnectionString}
               onChange={setDbConnectionString}
-              placeholder="postgresql://user:pass@host:25060/defaultdb?sslmode=require"
+              placeholder="postgresql://doadmin:password@db-xxx.ondigitalocean.com:25060/defaultdb?sslmode=require"
             />
+            {dbConnectionString && dbConnectionString.startsWith('postgresql://') && (
+              <p className="text-green-500 text-sm mt-2">✓ Connection string saved!</p>
+            )}
           </Step>
           
           <h3 className="font-semibold mt-6 mb-3">Checklist</h3>
